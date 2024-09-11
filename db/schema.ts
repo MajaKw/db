@@ -53,7 +53,8 @@ export const lessons = pgTable("lessons", {
 })
 
 export const lessonsAttachments = pgTable("lessons_attachments", {
-    idProblem: uuid("id_lesson").references(() => problems.idProblem),
+    idLessonAttachment: uuid("id_lesson_attachment").primaryKey(),
+    idLesson: uuid("id_lesson").references(() => lessons.idLesson),
     attachment: bytea("attachment")
 })
 export const coursesLessons = pgTable("courses_lessons", {
@@ -95,6 +96,7 @@ export const problems = pgTable("problems", {
 
 
 export const problemsAttachments = pgTable("problems_attachments", {
+    idProblemAttachment: uuid("id_problem_attachment").primaryKey(),
     idProblem: uuid("id_problem").references(() => problems.idProblem),
     attachment: bytea("attachment")
 })
@@ -107,11 +109,45 @@ export const goals = pgTable("goals", {
 export const problemsGoalsDifficulty = pgTable("problems_goals_difficulty", {
     idProblem: uuid("id_problem").references(() => problems.idProblem),
     idGoal: uuid("id_goal").references(() => goals.idGoal),
-    idDifficulty: uuid("id_difficulty").references(() => difficulty.idDifficulty)
+    idDifficulty: uuid("id_difficulty").references(() => difficulty.idDifficulty),   
+}, (table) => {
+    return {
+        pk: primaryKey({ name: 'id_problem_goal_difficulty', columns: [table.idProblem, table.idGoal, table.idDifficulty] }),
+    }
+}
+)
+    
+export const status = pgTable("status", {
+    idStatus: uuid("status").primaryKey(),
+    name: text("name").notNull()
 })
 
-// export const studentsAssignments = pgTable("students_assignments", {
-//     idProblem: uuid("id_problem").references(() => les.idProblem),
-//     idGoal: uuid("id_goal").references(() => goals.idGoal),
-//     idDifficulty: uuid("id_difficulty").references(() => difficulty.idDifficulty)
+
+
+export const submissionsAttachments = pgTable("submissionsAttachments", {
+    idSubmissionAttachment: uuid("id_submission_attachment").primaryKey(),
+    idSubmission: uuid("id_submission").references(()=> submissions.idSubmission),
+    attachment: bytea("attachment"),
+})
+
+export const submissions = pgTable("submissions", {
+    idProblem: uuid("id_problem").references(() => lessonsProblems.idProblem),
+    idStudent: uuid("id_student").references(()=> coursesStudents.idStudent),
+    idSubmission: uuid("id_submission").primaryKey(), 
+    submissionContent: text("content"),
+    assessment: text("assessment"),
+    
+})
+
+// export const submissions = pgTable("submissions", {
+//     idSubmission: uuid("id_submission").primaryKey(),
+//     content: text("content"),
 // })
+
+// export const assessments = pgTable("mentors_assessments", {
+//     idSubmission: uuid("submission").references(() => submissions.idSubmission),
+//     idStatus: uuid("id_status").references(() => status.idStatus),
+// })
+
+
+
