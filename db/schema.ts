@@ -66,7 +66,7 @@ export const coursesLessons = pgTable("courses_lessons", {
         }
 })
 
-export const coursesProblems = pgTable("courses_problems", {
+export const lessonsProblems = pgTable("lessons_problems", {
     idLesson: uuid("id_lesson").references(() => lessons.idLesson),
     idProblem: uuid("id_problem").references(() => problems.idProblem)
     },
@@ -109,3 +109,9 @@ export const problemsGoalsDifficulty = pgTable("problems_goals_difficulty", {
     idGoal: uuid("id_goal").references(() => goals.idGoal),
     idDifficulty: uuid("id_difficulty").references(() => difficulty.idDifficulty)
 })
+
+// export const studentsAssignments = pgTable("students_assignments", {
+//     idProblem: uuid("id_problem").references(() => les.idProblem),
+//     idGoal: uuid("id_goal").references(() => goals.idGoal),
+//     idDifficulty: uuid("id_difficulty").references(() => difficulty.idDifficulty)
+// })
