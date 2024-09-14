@@ -1,5 +1,5 @@
 {
-  "id": "7a2b2ccb-c0c8-415a-a5e8-6c32d2b284f7",
+  "id": "23380467-bd18-4f31-987f-6ceb22fbd811",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -26,6 +26,104 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "public.casual_problem_": {
+      "name": "casual_problem_",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "markdown_id": {
+          "name": "markdown_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "casual_problem__id_problem__id_fk": {
+          "name": "casual_problem__id_problem__id_fk",
+          "tableFrom": "casual_problem_",
+          "tableTo": "problem_",
+          "columnsFrom": [
+            "id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "casual_problem__markdown_id_markdown__id_fk": {
+          "name": "casual_problem__markdown_id_markdown__id_fk",
+          "tableFrom": "casual_problem_",
+          "tableTo": "markdown_",
+          "columnsFrom": [
+            "markdown_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.casual_submission_": {
+      "name": "casual_submission_",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "submission_markdown_id": {
+          "name": "submission_markdown_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "casual_submission__id_submission__id_fk": {
+          "name": "casual_submission__id_submission__id_fk",
+          "tableFrom": "casual_submission_",
+          "tableTo": "submission_",
+          "columnsFrom": [
+            "id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "casual_submission__submission_markdown_id_markdown__id_fk": {
+          "name": "casual_submission__submission_markdown_id_markdown__id_fk",
+          "tableFrom": "casual_submission_",
+          "tableTo": "markdown_",
+          "columnsFrom": [
+            "submission_markdown_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "public.course_lesson_": {
       "name": "course_lesson_",
       "schema": "",
@@ -35,6 +133,12 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": false
+        },
+        "lesson_order": {
+          "name": "lesson_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
         },
         "course_id": {
           "name": "course_id",
@@ -276,7 +380,7 @@
           "name": "course_type_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "markdown_id": {
           "name": "markdown_id",
@@ -460,8 +564,8 @@
       },
       "uniqueConstraints": {}
     },
-    "public.problem_goal_rating": {
-      "name": "problem_goal_rating",
+    "public.problem_goal_rating_total_": {
+      "name": "problem_goal_rating_total_",
       "schema": "",
       "columns": {
         "problem_id": {
@@ -491,9 +595,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "problem_goal_rating_problem_id_problem__id_fk": {
-          "name": "problem_goal_rating_problem_id_problem__id_fk",
-          "tableFrom": "problem_goal_rating",
+        "problem_goal_rating_total__problem_id_problem__id_fk": {
+          "name": "problem_goal_rating_total__problem_id_problem__id_fk",
+          "tableFrom": "problem_goal_rating_total_",
           "tableTo": "problem_",
           "columnsFrom": [
             "problem_id"
@@ -504,12 +608,100 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "problem_goal_rating_goal_id_goal__id_fk": {
-          "name": "problem_goal_rating_goal_id_goal__id_fk",
-          "tableFrom": "problem_goal_rating",
+        "problem_goal_rating_total__goal_id_goal__id_fk": {
+          "name": "problem_goal_rating_total__goal_id_goal__id_fk",
+          "tableFrom": "problem_goal_rating_total_",
           "tableTo": "goal_",
           "columnsFrom": [
             "goal_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "problem_goal_rating_total_pk": {
+          "name": "problem_goal_rating_total_pk",
+          "columns": [
+            "problem_id",
+            "goal_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.problem_goal_rating_": {
+      "name": "problem_goal_rating_",
+      "schema": "",
+      "columns": {
+        "problem_id": {
+          "name": "problem_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "goal_id": {
+          "name": "goal_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "quality": {
+          "name": "quality",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "difficulty": {
+          "name": "difficulty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "problem_goal_rating__problem_id_problem__id_fk": {
+          "name": "problem_goal_rating__problem_id_problem__id_fk",
+          "tableFrom": "problem_goal_rating_",
+          "tableTo": "problem_",
+          "columnsFrom": [
+            "problem_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "problem_goal_rating__goal_id_goal__id_fk": {
+          "name": "problem_goal_rating__goal_id_goal__id_fk",
+          "tableFrom": "problem_goal_rating_",
+          "tableTo": "goal_",
+          "columnsFrom": [
+            "goal_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "problem_goal_rating__user_id_user__id_fk": {
+          "name": "problem_goal_rating__user_id_user__id_fk",
+          "tableFrom": "problem_goal_rating_",
+          "tableTo": "user_",
+          "columnsFrom": [
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -523,10 +715,33 @@
           "name": "problem_goal_rating_pk",
           "columns": [
             "problem_id",
-            "goal_id"
+            "goal_id",
+            "user_id"
           ]
         }
       },
+      "uniqueConstraints": {}
+    },
+    "public.problem_type_": {
+      "name": "problem_type_",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
     "public.problem_": {
@@ -545,8 +760,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "markdown_id": {
-          "name": "markdown_id",
+        "type_id": {
+          "name": "type_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": false
@@ -554,12 +769,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "problem__markdown_id_markdown__id_fk": {
-          "name": "problem__markdown_id_markdown__id_fk",
+        "problem__type_id_problem_type__id_fk": {
+          "name": "problem__type_id_problem_type__id_fk",
           "tableFrom": "problem_",
-          "tableTo": "markdown_",
+          "tableTo": "problem_type_",
           "columnsFrom": [
-            "markdown_id"
+            "type_id"
           ],
           "columnsTo": [
             "id"
@@ -575,12 +790,6 @@
       "name": "review_",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true
-        },
         "review": {
           "name": "review",
           "type": "text",
@@ -629,7 +838,15 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "review_pk": {
+          "name": "review_pk",
+          "columns": [
+            "student_id",
+            "course_id"
+          ]
+        }
+      },
       "uniqueConstraints": {}
     },
     "public.status_": {
@@ -647,6 +864,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "priority": {
+          "name": "priority",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
@@ -654,8 +877,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "public.student_assignment_": {
-      "name": "student_assignment_",
+    "public.submission_": {
+      "name": "submission_",
       "schema": "",
       "columns": {
         "id": {
@@ -668,96 +891,29 @@
           "name": "problem_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "student_assignment__problem_id_course_problem__problem_id_fk": {
-          "name": "student_assignment__problem_id_course_problem__problem_id_fk",
-          "tableFrom": "student_assignment_",
-          "tableTo": "course_problem_",
-          "columnsFrom": [
-            "problem_id"
-          ],
-          "columnsTo": [
-            "problem_id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "student_assignment__user_id_course_user__user_id_fk": {
-          "name": "student_assignment__user_id_course_user__user_id_fk",
-          "tableFrom": "student_assignment_",
-          "tableTo": "course_user_",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "user_id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "public.submission_": {
-      "name": "submission_",
-      "schema": "",
-      "columns": {
-        "submission": {
-          "name": "submission",
-          "type": "uuid",
-          "primaryKey": true,
           "notNull": true
-        },
-        "assignment_id": {
-          "name": "assignment_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "submission_markdown_id": {
-          "name": "submission_markdown_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "assessment_markdown_id": {
-          "name": "assessment_markdown_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
         },
         "status_id": {
           "name": "status_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
-        },
-        "teacher_id": {
-          "name": "teacher_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "submission__assignment_id_student_assignment__id_fk": {
-          "name": "submission__assignment_id_student_assignment__id_fk",
+        "submission__problem_id_problem__id_fk": {
+          "name": "submission__problem_id_problem__id_fk",
           "tableFrom": "submission_",
-          "tableTo": "student_assignment_",
+          "tableTo": "problem_",
           "columnsFrom": [
-            "assignment_id"
+            "problem_id"
           ],
           "columnsTo": [
             "id"
@@ -765,25 +921,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "submission__submission_markdown_id_markdown__id_fk": {
-          "name": "submission__submission_markdown_id_markdown__id_fk",
+        "submission__user_id_user__id_fk": {
+          "name": "submission__user_id_user__id_fk",
           "tableFrom": "submission_",
-          "tableTo": "markdown_",
+          "tableTo": "user_",
           "columnsFrom": [
-            "submission_markdown_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "submission__assessment_markdown_id_markdown__id_fk": {
-          "name": "submission__assessment_markdown_id_markdown__id_fk",
-          "tableFrom": "submission_",
-          "tableTo": "markdown_",
-          "columnsFrom": [
-            "assessment_markdown_id"
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -800,19 +943,6 @@
           ],
           "columnsTo": [
             "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "submission__teacher_id_course_user__user_id_fk": {
-          "name": "submission__teacher_id_course_user__user_id_fk",
-          "tableFrom": "submission_",
-          "tableTo": "course_user_",
-          "columnsFrom": [
-            "teacher_id"
-          ],
-          "columnsTo": [
-            "user_id"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
