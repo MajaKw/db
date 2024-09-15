@@ -1,10 +1,12 @@
-import { boolean, serial, text, primaryKey, timestamp, pgTable, uuid, varchar, numeric, integer, customType } from "drizzle-orm/pg-core";
+import { boolean, serial,date, interval, text, primaryKey, timestamp, pgTable, uuid, varchar, numeric, integer, customType, time } from "drizzle-orm/pg-core";
 
 const bytea = customType<{ data: Buffer; notNull: true; default: false }>({
     dataType() {
       return "bytea";
     },
   });
+
+
 
 //
 export const course_ = pgTable("course_", {
@@ -13,7 +15,8 @@ export const course_ = pgTable("course_", {
   price: numeric("price", {precision: 6, scale:2} ),
   maxStudents: integer("max_students"),
   courseVisibilityId: uuid("course_type_id").references(() => courseVisibility_.id).notNull(),
-  markdownId: uuid("markdown_id").references(() => markdown_.id)
+  markdownId: uuid("markdown_id").references(() => markdown_.id),
+  duration: interval('duration', { fields: 'hour' })
 });
 
 //
@@ -50,7 +53,9 @@ export const lesson_ = pgTable("lesson_", {
 export const courseLesson_ = pgTable("course_lesson_", {
     lessonId: uuid("lesson_id").references(() => lesson_.id),
     lessonOrder: integer("lesson_order").notNull(),
-    courseId: uuid("course_id").references(() => course_.id)
+    courseId: uuid("course_id").references(() => course_.id),
+    // schedule moze byc null bo tu tez sa szablony
+    schedule: uuid("lesson_schedule_id").references(() => scheduleLesson_.id)
     },
     (table) => {
         return {
@@ -80,6 +85,8 @@ export const courseProblem_ = pgTable("course_problem_", {
     courseId: uuid("course_id").references(() => course_.id),
     problemId: uuid("problem_id").references(() => problem_.id),
     lessonId: uuid("lesson_id").references(() => lesson_.id), // can be null
+    // moze byc null jelsi chcemy miec zadania bez terminu
+    schedule: uuid("problem_schedule_id").references(() =>scheduleProblem_.id)
     // FK: terminID
     },
     (table) => {
@@ -186,4 +193,33 @@ export const review_ = pgTable("review_", {
         pk: primaryKey({ name: 'review_pk', columns: [table.studentId, table.courseId] }),
     }
 })
+
+
+
+// WERSJA 1
+export const scheduleLesson_ = pgTable("schedule_lesson_", {
+    id: uuid("id").primaryKey(),
+    start: timestamp("start", {withTimezone: true}).notNull(),
+    end: timestamp("end", {withTimezone: true}).notNull(),
+    // duration ma byc czy nie?
+    duration: interval("duration", {fields: 'hour to minute'})
+})
+// Czy moze chcemy trzymac w jednej tabeli schedule_lesson i schedule_problem ?
+// 
+
+export const scheduleProblem_ = pgTable("schedule_problem_", {
+    id: uuid("id").primaryKey(),
+    deadline: timestamp("deadline", {withTimezone: true}).notNull()
+})
+
+
+// WERSJA 2 schedule_lesson_
+// Nie, bo moze zrobic sie zamęt z timeZonem samego dnia?
+
+// export const schedule_lesson_ = pgTable("schedule_lesson_", {
+//     id: uuid("id").primaryKey(),
+//     day: date("day", {withTimezone: true}).notNull(),
+//     start: time("start", {withTimezone: true}).notNull(),
+//     end: time("end", {withTimezone: true}).notNull(),
+// })
 

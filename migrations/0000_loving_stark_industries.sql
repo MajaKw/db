@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS "course_lesson_" (
 	"lesson_id" uuid,
 	"lesson_order" integer NOT NULL,
 	"course_id" uuid,
+	"lesson_schedule_id" uuid,
 	CONSTRAINT "course_lesson_pk" PRIMARY KEY("lesson_id","course_id")
 );
 --> statement-breakpoint
@@ -24,6 +25,7 @@ CREATE TABLE IF NOT EXISTS "course_problem_" (
 	"course_id" uuid,
 	"problem_id" uuid,
 	"lesson_id" uuid,
+	"problem_schedule_id" uuid,
 	CONSTRAINT "course_problem_pk" PRIMARY KEY("course_id","problem_id")
 );
 --> statement-breakpoint
@@ -45,7 +47,8 @@ CREATE TABLE IF NOT EXISTS "course_" (
 	"price" numeric(6, 2),
 	"max_students" integer,
 	"course_type_id" uuid NOT NULL,
-	"markdown_id" uuid
+	"markdown_id" uuid,
+	"duration" interval hour
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "goal_" (
@@ -105,6 +108,18 @@ CREATE TABLE IF NOT EXISTS "review_" (
 	CONSTRAINT "review_pk" PRIMARY KEY("student_id","course_id")
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "schedule_lesson_" (
+	"id" uuid PRIMARY KEY NOT NULL,
+	"start" timestamp with time zone NOT NULL,
+	"end" timestamp with time zone NOT NULL,
+	"duration" interval hour to minute
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "schedule_problem_" (
+	"id" uuid PRIMARY KEY NOT NULL,
+	"deadline" timestamp with time zone NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "status_" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
@@ -159,6 +174,12 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "course_lesson_" ADD CONSTRAINT "course_lesson__lesson_schedule_id_schedule_lesson__id_fk" FOREIGN KEY ("lesson_schedule_id") REFERENCES "public"."schedule_lesson_"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "course_problem_" ADD CONSTRAINT "course_problem__course_id_course__id_fk" FOREIGN KEY ("course_id") REFERENCES "public"."course_"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -172,6 +193,12 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "course_problem_" ADD CONSTRAINT "course_problem__lesson_id_lesson__id_fk" FOREIGN KEY ("lesson_id") REFERENCES "public"."lesson_"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "course_problem_" ADD CONSTRAINT "course_problem__problem_schedule_id_schedule_problem__id_fk" FOREIGN KEY ("problem_schedule_id") REFERENCES "public"."schedule_problem_"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
